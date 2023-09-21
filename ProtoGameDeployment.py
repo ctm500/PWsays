@@ -20,30 +20,30 @@ class logicBox:
     key = Fernet(salt.encode())
     DMkey = key
     isDM = False
-    truth = open("Truth.txt", 'r')    
+    truth = open("Truth.txt", 'r')
     def next(self):
         return self.truth.readline().split('\n')[0]
-    
+
     def resetRead(self):
         self.truth.seek(0)
-    
+
     def advance(self,N):
         self.resetRead()
         for i in range(0,N):
             self.next()
-            
+
     def getReadLines(self, N,M):
         lines = []
         self.resetRead()
         self.advance(N + 1)
         for i in range(N,M):
-            lines.append(self.next())  
+            lines.append(self.next())
         return lines
-        
+
     def getCodeLines(self, code):
-        titleId, bodyId, DMId, idx = 0,0,0,0 
+        titleId, bodyId, DMId, idx = 0,0,0,0
         self.resetRead()
-        
+
         idx = 0
         encounteredCode = False
         while True:
@@ -70,8 +70,6 @@ class logicBox:
                         DMId = idx
             idx = idx + 1
 
-
-    
 x = logicBox()
 
 def DMmode():
@@ -85,7 +83,7 @@ def call():
     titleId, bodyId, DMId, idx = x.getCodeLines(inputCode)
 
 #    x.body.append("{}\n\n".format(document.paragraphs[titleId+1].text))
-    
+
     titleLines = x.getReadLines(titleId, bodyId-1)
     lines = x.getReadLines(bodyId,DMId-1)
     dmlines = x.getReadLines(DMId, idx-1)
@@ -100,15 +98,15 @@ def call():
         encLine = lines[i]
         decLine = str(x.key.decrypt(encLine.encode()))[2:-1]
         text.insert("1.0", "{}\n".format(decLine))
-    
+
     for i in reversed(range(0,len(titleLines))):
         encTitle = titleLines[i]
         decTitle = str(x.key.decrypt(encTitle.encode()))[2:-1]
         text.insert("1.0", "{}\n\n".format(decTitle))
 
-              
+
 def saveandquit():
-    res = mb.askquestion('Exit Application', 
+    res = mb.askquestion('Exit Application',
                          'Do you really want to exit')
     if res == 'yes' :
         saveFileName = askstring('Save game...', 'File name')
@@ -119,14 +117,14 @@ def saveandquit():
         out.write("\n")
         root.destroy()
         return 0
-  
+
 
 # Driver's code
 root = inter.Tk()
-canvas = inter.Canvas(root, 
-                   width = 400, 
+canvas = inter.Canvas(root,
+                   width = 400,
                    height = 100)
-  
+
 canvas.pack()
 b = inter.Button(root,
            text ='#',
@@ -138,26 +136,26 @@ s = inter.Button(root,
            text ='Save and quit',
            command = saveandquit)
 root.title("Welcome.")
-  
+
 text = inter.Text(root, height=30, width=100)
 scroll = inter.Scrollbar(root)
 text.configure(yscrollcommand=scroll.set)
 text.pack(side=inter.LEFT)
-  
+
 scroll.config(command=text.yview)
 scroll.pack(side=inter.RIGHT, fill=inter.Y)
 
-canvas.create_window(50, 50, 
+canvas.create_window(50, 50,
                       window = b)
-canvas.create_window(150, 50, 
+canvas.create_window(150, 50,
                       window = c)
-canvas.create_window(100, 80, 
+canvas.create_window(100, 80,
                       window = s)
-  
+
 root.mainloop()
 # # we will be encrypting the below string.
 # message = "hello geeks"
- 
+
 # # generate a key for encryption and decryption
 # # You can use fernet to generate
 # # the key or use random key generator
@@ -179,28 +177,28 @@ root.mainloop()
 #     iterations=480000,
 # )
 # kdf.verify(b"my great password", key)
- 
+
 # key = Fernet.generate_key()
- 
+
 # # Instance the Fernet class with the key
- 
+
 # fernet = Fernet(key)
- 
+
 # # then use the Fernet class instance
 # # to encrypt the string string must
 # # be encoded to byte string before encryption
 # encMessage = fernet.encrypt(message.encode())
- 
+
 # print("original string: ", message)
 # print("encrypted string: ", encMessage)
- 
+
 # # decrypt the encrypted string with the
 # # Fernet instance of the key,
 # # that was used for encrypting the string
 # # encoded byte string is returned by decrypt method,
 # # so decode it to string with decode methods
 # decMessage = fernet.decrypt(encMessage).decode()
- 
+
 # print("decrypted string: ", decMessage)
 
 # window = inter.Tk()
