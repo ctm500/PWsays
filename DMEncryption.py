@@ -37,12 +37,14 @@ for filename in os.listdir(directory):
         if (len(par.text) > 0):
             if par.text[0] == '#':
                 code = par.text[1:]
-                out.write(par.text)
+                out.write("#")
+                out.write(str(key.encrypt(par.text[1:].encode()))[1:])
                 out.write("\n")
             if par.text[0] == '@':
                 if par.text[1:] == "Title":
                     ticker = 1
                     out.write("@Title")
+                    out.write("\n")                    
                     out.write("\n")
                     out.write(str(key.encrypt(par.text[1:].encode()))[1:])
                     out.write("\n")
@@ -50,12 +52,9 @@ for filename in os.listdir(directory):
                     ticker = 2
                     out.write("@Body")
                     out.write("\n")
-                    out.write(str(key.encrypt('bofa'.encode()))[1:])
-                    out.write("\n")
                 elif par.text[1:] == "DM":
                     ticker = 3
                     out.write("@DM")
-                    out.write("\n")
                     out.write("\n")
                     DMId = idx
             else:

@@ -52,7 +52,7 @@ class logicBox:
                 if (line == '<eof>'):
                     return titleId, bodyId, DMId, idx
                 if (line[0] == '#'):
-                    if code == line[1:]:
+                    if code == str(x.key.decrypt(line[1:].encode()))[2:-1]:
                         encounteredCode = True
                         idx = idx + 1
                         continue
@@ -74,6 +74,9 @@ x = logicBox()
 
 def DMmode():
     newpiece = askstring('DM mode', 'DM Password...')
+    if len(newpiece) == 0:
+        x.player = True
+        return
     newkey = newpiece + x.salt[len(newpiece):]
     x.DMkey = Fernet(newkey.encode())
     x.player = False
@@ -84,6 +87,9 @@ def call():
 
 #    x.body.append("{}\n\n".format(document.paragraphs[titleId+1].text))
 
+    if bodyId == 0:
+        return;
+        
     titleLines = x.getReadLines(titleId, bodyId-1)
     lines = x.getReadLines(bodyId,DMId-1)
     dmlines = x.getReadLines(DMId, idx-1)
@@ -91,18 +97,32 @@ def call():
     if not x.player:
         for i in reversed(range(0,len(dmlines))):
             encDMLine = dmlines[i]
-            decDMLine = str(x.DMkey.decrypt(encDMLine.encode()))[2:-1]
-            text.insert("1.0", "{}\n".format(decDMLine))
+            if len(encDMLine) > 0:
+                decDMLine = str(x.DMkey.decrypt(encDMLine.encode()))[2:-1]
+                text.insert("1.0", "{}\n\n".format(decDMLine))
+            else:
+                decDMLine = ''
+        
+        text.insert("1.0", "----------DM----------\n")
+
 
     for i in reversed(range(0,len(lines))):
         encLine = lines[i]
-        decLine = str(x.key.decrypt(encLine.encode()))[2:-1]
-        text.insert("1.0", "{}\n".format(decLine))
+        if len(encLine) > 0:
+            decLine = str(x.key.decrypt(encLine.encode()))[2:-1]
+            text.insert("1.0", "{}\n\n".format(decLine))
+        else:
+            decLine = ''
 
     for i in reversed(range(0,len(titleLines))):
         encTitle = titleLines[i]
-        decTitle = str(x.key.decrypt(encTitle.encode()))[2:-1]
-        text.insert("1.0", "{}\n\n".format(decTitle))
+        if len(encTitle) > 0:
+            decTitle = str(x.key.decrypt(encTitle.encode()))[2:-1]
+            text.insert("1.0", "{}\n\n".format(decTitle))
+        else: 
+            decTitle = ''
+    
+    text.insert("1.0", "========{}======\n".format(inputCode))
 
 
 def saveandquit():
@@ -111,9 +131,7 @@ def saveandquit():
     if res == 'yes' :
         saveFileName = askstring('Save game...', 'File name')
         out = open("{}.txt".format(saveFileName), "x")
-        out.write(str(x.key.encrypt('bofa'.encode()))[1:])
-        out.write("\n")
-        out.write(str(x.key.encrypt('deez'.encode()))[1:])
+        out.write(text.get("1.0",inter.END))
         out.write("\n")
         root.destroy()
         return 0
