@@ -7,6 +7,8 @@ Created on Sun Sep 17 14:41:18 2023
 
 # import os
 import tkinter as inter
+from tkinter import filedialog as fd
+import PyInstaller as PI
 from tkinter import messagebox as mb
 from cryptography.fernet import Fernet
 # from cryptography.hazmat.primitives import hashes
@@ -169,7 +171,19 @@ canvas.create_window(150, 50,
                       window = c)
 canvas.create_window(100, 80,
                       window = s)
-
+res = mb.askquestion('Load or new', 'Do you want to load a file?')
+if res == 'yes':
+    loadFileName = inter.filedialog.askopenfilename()
+    loadFile = open(loadFileName)
+    loadtxt = loadFile.read()
+else:
+    loadtxt = ''
+    
+text.insert("1.0", loadtxt)
+if res == 'yes':
+    text.insert("1.0", 
+                "=====---From session {} ---=====\n".format(loadFileName))
+    
 root.mainloop()
 # # we will be encrypting the below string.
 # message = "hello geeks"
